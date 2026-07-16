@@ -170,7 +170,7 @@
 <div class="container">
     <!-- 상단에서 둥실둥실 떠 있는 밤하늘 별나라 요정 -->
     <div class="character-header" id="charHeader">☆(❁´◡`❁)☆</div>
-    <h2 id="pageTitle">당일 23시까지만 사용할 수 있어요.</h2>
+    <h2 id="pageTitle">당일 23시까지만 사용할 수 있어요, 재생을 누르면 바로 1회씩 차감됩니다. 본인이 부여받은 번호만 재생하세요. 타번호 재생 절대금지 및 적발 시 기회 박탈</h2>
     
     <!-- 오디오 엘리먼트 (화면에서 숨김) -->
     <audio id="audioPlayer"></audio>
@@ -264,7 +264,7 @@
 
             const countDiv = document.createElement('div');
             countDiv.className = 'song-count';
-            countDiv.innerText = isDisabled ? "플레이 횟수 소진! ❌" : `남은 플레이 재생 기회: ✨ ${remaining}회`;
+            countDiv.innerText = isDisabled ? "모든 재생횟수 소진! ❌" : `남은 노래 재생 횟수: ✨ ${remaining}회`;
 
             infoDiv.appendChild(titleDiv);
             infoDiv.appendChild(countDiv);
