@@ -194,10 +194,20 @@ value="100">
 
 <script>
 
+// ===============================
+// 이용 제한 설정
+// ===============================
 
+// 최대 재생 횟수
 const MAX_PLAY = 3;
-
+// 이용 시작 시간
+const START_TIME = new Date("2026-07-18 09:00:00").getTime();
+// 이용 종료 시간
+const END_TIME = new Date("2026-07-18 23:00:00").getTime();
+// 저장 키
 const STORAGE_KEY="video_play_count";
+// 날짜 저장 키
+const DATE_KEY="video_use_date";
 
 const video=document.getElementById("video");
 
@@ -214,10 +224,81 @@ const remain=document.getElementById("remain");
 const volume=document.getElementById("volume");
 
 const volumeValue=document.getElementById("volumeValue");
+// ===============================
+// 기간 체크
+// ===============================
+
+function checkAccess(){
+
+
+    const now = new Date().getTime();
+
+
+    if(now < START_TIME || now > END_TIME){
+
+
+        document.body.innerHTML = `
+
+        <div style="
+        width:100%;
+        height:100vh;
+        display:flex;
+        justify-content:center;
+        align-items:center;
+        background:#f8f8ff;
+        font-size:28px;
+        font-weight:bold;
+        text-align:center;
+        ">
+
+        🔒 이용 가능 시간이 종료되었습니다.<br>
+        <br>
+        이용 가능 시간:<br>
+        09:00 ~ 23:00
+
+        </div>
+
+        `;
+
+
+        return false;
+
+    }
+
+
+    return true;
+
+}
 
 
 
-let count=Number(localStorage.getItem(STORAGE_KEY)||0);
+if(!checkAccess()){
+
+    throw new Error("접근 종료");
+
+}
+    
+let today = new Date().toISOString().slice(0,10);
+
+
+let savedDate = localStorage.getItem(DATE_KEY);
+
+
+// 날짜가 바뀌면 횟수 초기화
+
+if(savedDate !== today){
+
+    localStorage.setItem(STORAGE_KEY,0);
+
+    localStorage.setItem(DATE_KEY,today);
+
+}
+
+
+
+let count=Number(
+    localStorage.getItem(STORAGE_KEY)||0
+);
 
 
 let isPlayingSession=false;
