@@ -42,6 +42,19 @@ video{
     text-align:center;
 }
 
+#volumeBox{
+    margin-top:20px;
+    text-align:center;
+    font-size:16px;
+    font-weight:bold;
+}
+
+#volume{
+    width:250px;
+    margin:0 10px;
+    vertical-align:middle;
+}
+
 button{
     background:#ff8fc7;
     color:white;
@@ -71,19 +84,26 @@ button:disabled{
 }
 
 </style>
+
 </head>
+
 <body>
 
 <div id="player">
+
 <div id="info">
 
 🎥 총 재생 가능 :
 <b><span id="maxCount"></span></b>회<br>
+
 📺 사용 횟수 :
 <b><span id="used"></span></b>회<br>
+
 💖 남은 횟수 :
 <b><span id="remain"></span></b>회
+
 </div>
+
 
 <video
 id="video"
@@ -93,19 +113,58 @@ disablePictureInPicture
 >
 
 <source src="SUNSHINE LOVE.mp4" type="video/mp4">
+
 </video>
 
-<div id="controls">
-<button id="playBtn">▶️ 재생</button>
-<button id="pauseBtn">⏸️ 정지</button>
-</div>
+
+<!-- 볼륨 조절 추가 -->
+<div id="volumeBox">
+
+🔊 볼륨 :
+
+<input 
+type="range" 
+id="volume" 
+min="0" 
+max="100" 
+value="100">
+
+<span id="volumeValue">100%</span>
+
+<br>
+
+<button id="muteBtn">
+🔇 음소거
+</button>
+
 </div>
 
+
+
+<div id="controls">
+
+<button id="playBtn">
+▶️ 재생
+</button>
+
+<button id="pauseBtn">
+⏸️ 정지
+</button>
+
+</div>
+
+
+</div>
+
+
+
 <script>
+
 
 const MAX_PLAY = 3;
 
 const STORAGE_KEY="video_play_count";
+
 
 const video=document.getElementById("video");
 
@@ -113,28 +172,39 @@ const playBtn=document.getElementById("playBtn");
 
 const pauseBtn=document.getElementById("pauseBtn");
 
-const pipBtn=document.getElementById("pipBtn");
-
 const maxCount=document.getElementById("maxCount");
 
 const used=document.getElementById("used");
 
 const remain=document.getElementById("remain");
 
+
+const volume=document.getElementById("volume");
+
+const volumeValue=document.getElementById("volumeValue");
+
+const muteBtn=document.getElementById("muteBtn");
+
+
+
 let count=Number(localStorage.getItem(STORAGE_KEY)||0);
 
-// 현재 재생 세션인지 여부
+
 let isPlayingSession=false;
+
+
 
 function updateInfo(){
 
     let left=MAX_PLAY-count;
+
 
     maxCount.innerText=MAX_PLAY;
 
     used.innerText=count;
 
     remain.innerText=left;
+
 
     if(left<=0){
 
@@ -152,9 +222,13 @@ function updateInfo(){
 
 }
 
+
 updateInfo();
 
+
+
 playBtn.onclick=async()=>{
+
 
     if(video.ended){
 
@@ -164,8 +238,10 @@ playBtn.onclick=async()=>{
 
     }
 
-    // 새로운 재생만 차감
+
+
     if(!isPlayingSession){
+
 
         if(count>=MAX_PLAY){
 
@@ -175,23 +251,33 @@ playBtn.onclick=async()=>{
 
         }
 
+
         count++;
+
 
         localStorage.setItem(STORAGE_KEY,count);
 
+
         updateInfo();
+
 
         isPlayingSession=true;
 
+
     }
+
+
 
     try{
 
+
         await video.play();
 
-        // 자동 PiP
+
+
         if(document.pictureInPictureEnabled &&
            !document.pictureInPictureElement){
+
 
             try{
 
@@ -203,7 +289,9 @@ playBtn.onclick=async()=>{
 
             }
 
+
         }
+
 
     }catch(e){
 
@@ -211,7 +299,10 @@ playBtn.onclick=async()=>{
 
     }
 
+
 };
+
+
 
 pauseBtn.onclick=()=>{
 
@@ -219,27 +310,56 @@ pauseBtn.onclick=()=>{
 
 };
 
-pipBtn.onclick=async()=>{
 
-    try{
 
-        if(document.pictureInPictureElement){
+// =====================
+// 볼륨 기능 추가
+// =====================
 
-            await document.exitPictureInPicture();
 
-        }else{
+volume.oninput=()=>{
 
-            await video.requestPictureInPicture();
 
-        }
+    let value=volume.value;
 
-    }catch(e){
 
-        alert("PiP를 지원하지 않는 브라우저입니다.");
+    video.volume=value/100;
+
+
+    volumeValue.innerText=value+"%";
+
+
+};
+
+
+
+muteBtn.onclick=()=>{
+
+
+    video.muted=!video.muted;
+
+
+
+    if(video.muted){
+
+        muteBtn.innerHTML="🔊 음소거 해제";
+
+    }else{
+
+        muteBtn.innerHTML="🔇 음소거";
 
     }
 
+
 };
+
+
+
+// 초기 볼륨 설정
+
+video.volume=1;
+
+
 
 video.onended=()=>{
 
@@ -247,12 +367,19 @@ video.onended=()=>{
 
 };
 
-// 전체 페이지 우클릭 방지
+
+
+// 우클릭 방지
+
 document.addEventListener("contextmenu", function(e){
+
     e.preventDefault();
+
 });
 
+
 </script>
+
 
 </body>
 
