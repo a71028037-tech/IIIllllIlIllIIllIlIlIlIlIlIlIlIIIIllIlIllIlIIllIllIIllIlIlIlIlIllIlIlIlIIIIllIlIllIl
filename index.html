@@ -103,6 +103,32 @@ button:disabled{
 #noticeBox p{
     margin:0;
 }
+
+#videoList{
+    background:#fff5fb;
+    border-radius:18px;
+    padding:15px;
+    margin-bottom:20px;
+}
+
+#videoList h3{
+    margin:0 0 10px;
+    color:#ff69b4;
+}
+
+.videoItem{
+    background:white;
+    border-radius:15px;
+    padding:12px;
+    margin:8px 0;
+    cursor:pointer;
+    font-weight:bold;
+    box-shadow:0 3px 8px rgba(0,0,0,.08);
+}
+
+.videoItem:hover{
+    background:#ffe8f3;
+}
     
 </style>
 
@@ -129,8 +155,18 @@ button:disabled{
 
 </div>
 
+    <!-- 영상 목록 -->
 
+<div id="videoList">
 
+<h3>
+🎬 영상 목록
+</h3>
+
+<div id="list"></div>
+
+</div>
+    
 <div id="info">
 
 📺 사용 횟수 :
@@ -149,8 +185,6 @@ playsinline
 controlsList="nodownload nofullscreen noremoteplayback"
 disablePictureInPicture
 >
-
-<source src="SUNSHINE LOVE.mp4" type="video/mp4">
 
 </video>
 
@@ -203,9 +237,35 @@ const MAX_PLAY = 3;
 // 이용 시작 시간
 const START_TIME = new Date("2026-07-18 00:00:00").getTime();
 // 이용 종료 시간
-const END_TIME = new Date("2026-07-18 03:28:00").getTime();
+const END_TIME = new Date("2026-07-18 03:59:00").getTime();
 // 저장 키
-const STORAGE_KEY="video_play_count";
+let currentVideoId="sunshine";
+
+// ===============================
+// 영상 목록
+// ===============================
+
+const videos=[
+
+{
+id:"1번",
+title:"☀️ Sunshine Love",
+src:"SUNSHINE LOVE.mp4"
+},
+
+{
+id:"2번",
+title:"🌿 Healing Nature",
+src:"NATURE.mp4"
+},
+
+{
+id:"3번",
+title:"🌙 Night Story",
+src:"NIGHT STORY.mp4"
+}
+
+];    
 
 const video=document.getElementById("video");
 
@@ -276,9 +336,20 @@ if(!checkAccess()){
 }
     
 
-let count=Number(
-    localStorage.getItem(STORAGE_KEY)||0
-);
+let count=0;
+
+
+function loadCount(){
+
+    count=Number(
+        localStorage.getItem(
+            "video_play_"+currentVideoId
+        ) || 0
+    );
+
+    updateInfo();
+
+}
 
 
 let isPlayingSession=false;
@@ -365,10 +436,13 @@ playBtn.onclick=async()=>{
         }
 
 
-        count++;
+count++;
 
 
-        localStorage.setItem(STORAGE_KEY,count);
+localStorage.setItem(
+    "video_play_"+currentVideoId,
+    count
+);
 
 
         updateInfo();
@@ -483,6 +557,50 @@ document.addEventListener("contextmenu", function(e){
     e.preventDefault();
 
 });
+
+// ===============================
+// 영상 선택 기능
+// ===============================
+
+const list=document.getElementById("list");
+
+
+videos.forEach((item,index)=>{
+
+
+    let div=document.createElement("div");
+
+
+    div.className="videoItem";
+
+
+    div.innerHTML=item.title;
+
+
+div.onclick=()=>{
+
+
+    video.src=item.src;
+
+    video.load();
+
+
+    currentVideoId=item.id;
+
+
+    isPlayingSession=false;
+
+
+    loadCount();
+
+
+};count++;
+
+
+    list.appendChild(div);
+
+
+});    
 
 setInterval(()=>{
 
