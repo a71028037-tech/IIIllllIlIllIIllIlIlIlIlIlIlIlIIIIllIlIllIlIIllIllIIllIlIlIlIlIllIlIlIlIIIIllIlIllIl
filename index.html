@@ -2,114 +2,77 @@
 <html lang="ko">
 <head>
 <meta charset="UTF-8">
-<title>Video Player</title>
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>귀여운 Video Player</title>
 
 <style>
-
 body{
     margin:0;
-    background:#f8f8ff;
-    font-family:"Pretendard",sans-serif;
+    background:#f8f4ff;
+    font-family:Arial, "Pretendard", sans-serif;
     display:flex;
     justify-content:center;
     align-items:center;
-    height:100vh;
+    min-height:100vh;
 }
 
 #player{
-
-    width:1080px;
-
+    width:min(760px, 92%);
     background:white;
-
     border-radius:25px;
-
     padding:25px;
-
     box-shadow:0 15px 35px rgba(0,0,0,.15);
-
 }
 
 video{
-
     width:100%;
-
     border-radius:20px;
-
     background:black;
-
 }
 
 #info{
-
     text-align:center;
-
-    font-size:18px;
-
-    margin-bottom:18px;
-
     line-height:1.8;
-
+    margin-bottom:18px;
+    font-size:18px;
 }
 
 #controls{
-
-    margin-top:20px;
-
     text-align:center;
-
+    margin-top:20px;
 }
 
 button{
-
-    background:#ff8fc7;
-
-    color:white;
-
-    border:none;
-
-    border-radius:40px;
-
-    padding:14px 28px;
-
-    margin:8px;
-
-    font-size:17px;
-
+    border:0;
+    border-radius:30px;
+    padding:12px 24px;
+    margin:6px;
+    font-size:16px;
     font-weight:bold;
-
+    color:white;
+    background:#ff8fc7;
     cursor:pointer;
-
-    transition:.25s;
-
-    box-shadow:0 6px 12px rgba(0,0,0,.18);
-
+    box-shadow:0 5px 12px rgba(0,0,0,.15);
+    transition:.2s;
 }
 
 button:hover{
-
-    transform:translateY(-2px);
-
+    transform:scale(1.05);
     background:#ff69b4;
-
-}
-
-button:active{
-
-    transform:scale(.95);
-
 }
 
 button:disabled{
-
-    background:#bdbdbd;
-
+    background:#aaa;
     cursor:not-allowed;
-
+    transform:none;
 }
 
+input[type=range]{
+    width:180px;
+    accent-color:#ff8fc7;
+    vertical-align:middle;
+}
 </style>
-
 </head>
 
 <body>
@@ -117,206 +80,141 @@ button:disabled{
 <div id="player">
 
 <div id="info">
-
-🎥 총 재생 가능 :
-<b><span id="maxCount"></span></b>회<br>
-
-📺 사용 횟수 :
-<b><span id="used"></span></b>회<br>
-
-💖 남은 횟수 :
-<b><span id="remain"></span></b>회
-
+🎬 총 재생 가능 : <b><span id="maxCount"></span></b>회<br>
+📺 사용 횟수 : <b><span id="used"></span></b>회<br>
+💖 남은 횟수 : <b><span id="remain"></span></b>회
 </div>
 
-<video
-id="video"
+<video id="video"
 playsinline
-controlsList="nodownload nofullscreen noremoteplayback"
-disablePictureInPicture
->
-
-<source src="SUNSHINE LOVE.mp4" type="video/mp4">
-
+controlsList="nodownload nofullscreen noremoteplayback">
+<source src="video.mp4" type="video/mp4">
 </video>
 
 <div id="controls">
-
 <button id="playBtn">▶️ 재생</button>
-
 <button id="pauseBtn">⏸️ 일시정지</button>
-
+<button id="pipBtn">🪟 PiP</button>
 <br>
-
 <button id="muteBtn">🔊 음소거</button>
-
-<input 
-type="range"
-id="volume"
-min="0"
-max="1"
-step="0.01"
-value="1"
->
-
+<input id="volume" type="range" min="0" max="1" step="0.01" value="1">
 <span id="volumeText">100%</span>
+</div>
 
 </div>
 
 <script>
-
 const MAX_PLAY = 3;
+const STORAGE_KEY = "video_play_count";
 
-const STORAGE_KEY="video_play_count";
+const video = document.getElementById("video");
+const playBtn = document.getElementById("playBtn");
+const pauseBtn = document.getElementById("pauseBtn");
+const pipBtn = document.getElementById("pipBtn");
+const muteBtn = document.getElementById("muteBtn");
+const volume = document.getElementById("volume");
+const volumeText = document.getElementById("volumeText");
 
-const video=document.getElementById("video");
+const maxCount = document.getElementById("maxCount");
+const used = document.getElementById("used");
+const remain = document.getElementById("remain");
 
-const playBtn=document.getElementById("playBtn");
-
-const pauseBtn=document.getElementById("pauseBtn");
-
-const pipBtn=document.getElementById("pipBtn");
-
-const maxCount=document.getElementById("maxCount");
-
-const used=document.getElementById("used");
-
-const remain=document.getElementById("remain");
-
-let count=Number(localStorage.getItem(STORAGE_KEY)||0);
-
-// 현재 재생 세션인지 여부
-let isPlayingSession=false;
+let count = Number(localStorage.getItem(STORAGE_KEY) || 0);
+let isPlayingSession = false;
 
 function updateInfo(){
+    const left = MAX_PLAY - count;
 
-    let left=MAX_PLAY-count;
+    maxCount.textContent = MAX_PLAY;
+    used.textContent = count;
+    remain.textContent = left;
 
-    maxCount.innerText=MAX_PLAY;
-
-    used.innerText=count;
-
-    remain.innerText=left;
-
-    if(left<=0){
-
-        playBtn.disabled=true;
-
-        playBtn.innerHTML="🔒 재생 불가";
-
-    }else{
-
-        playBtn.disabled=false;
-
-        playBtn.innerHTML="▶️ 재생";
-
-    }
-
+    playBtn.disabled = left <= 0;
+    playBtn.innerHTML = left <= 0 ? "🔒 재생 불가" : "▶️ 재생";
 }
 
 updateInfo();
 
-playBtn.onclick=async()=>{
+playBtn.onclick = async()=>{
 
     if(video.ended){
-
-        video.currentTime=0;
-
-        isPlayingSession=false;
-
+        video.currentTime = 0;
+        isPlayingSession = false;
     }
 
-    // 새로운 재생만 차감
     if(!isPlayingSession){
 
-        if(count>=MAX_PLAY){
-
-            alert("재생 횟수를 모두 사용했습니다.");
-
+        if(count >= MAX_PLAY){
             return;
-
         }
 
         count++;
-
-        localStorage.setItem(STORAGE_KEY,count);
-
+        localStorage.setItem(STORAGE_KEY, count);
+        isPlayingSession = true;
         updateInfo();
-
-        isPlayingSession=true;
-
     }
 
     try{
-
         await video.play();
 
-        // 자동 PiP
         if(document.pictureInPictureEnabled &&
            !document.pictureInPictureElement){
-
             try{
-
                 await video.requestPictureInPicture();
-
             }catch(e){
-
                 console.log("자동 PiP 제한");
-
             }
-
         }
-
     }catch(e){
-
         console.log(e);
-
     }
-
 };
 
-pauseBtn.onclick=()=>{
-
+pauseBtn.onclick = ()=>{
     video.pause();
-
 };
 
-pipBtn.onclick=async()=>{
+pipBtn.onclick = async()=>{
 
     try{
-
         if(document.pictureInPictureElement){
-
             await document.exitPictureInPicture();
-
         }else{
-
             await video.requestPictureInPicture();
-
         }
-
     }catch(e){
-
         alert("PiP를 지원하지 않는 브라우저입니다.");
-
     }
-
 };
 
-video.onended=()=>{
-
-    isPlayingSession=false;
-
+video.onended = ()=>{
+    isPlayingSession = false;
 };
 
-video.addEventListener("contextmenu",e=>{
+volume.oninput = ()=>{
+    video.volume = volume.value;
+    volumeText.textContent = Math.round(volume.value * 100) + "%";
+};
 
+muteBtn.onclick = ()=>{
+
+    video.muted = !video.muted;
+
+    if(video.muted){
+        muteBtn.innerHTML = "🔇 음소거 해제";
+        volume.value = 0;
+        volumeText.textContent = "0%";
+    }else{
+        muteBtn.innerHTML = "🔊 음소거";
+        volume.value = video.volume;
+        volumeText.textContent = Math.round(video.volume * 100) + "%";
+    }
+};
+
+video.addEventListener("contextmenu", e=>{
     e.preventDefault();
-
 });
-
 </script>
 
 </body>
-
 </html>
