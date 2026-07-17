@@ -70,18 +70,6 @@ button:disabled{
     cursor:not-allowed;
 }
 
-#volume{
-    width:150px;
-    vertical-align:middle;
-    accent-color:#ff8fc7;
-    cursor:pointer;
-}
-
-#volumeText{
-    font-weight:bold;
-    margin-left:8px;
-}    
-
 </style>
 </head>
 <body>
@@ -108,24 +96,9 @@ disablePictureInPicture
 </video>
 
 <div id="controls">
-
 <button id="playBtn">▶️ 재생</button>
-<button id="pauseBtn">⏸️ 일시정지</button>
-
-<br>
-
-<button id="muteBtn">🔊 음소거</button>
-
-<input 
-    id="volume"
-    type="range"
-    min="0"
-    max="100"
-    value="100"
->
-
-<span id="volumeText">100%</span>
-
+<button id="pauseBtn">⏸️ 정지</button>
+</div>
 </div>
 
 <script>
@@ -148,65 +121,8 @@ const used=document.getElementById("used");
 
 const remain=document.getElementById("remain");
 
-const volume = document.getElementById("volume");
-const volumeText = document.getElementById("volumeText");
-const muteBtn = document.getElementById("muteBtn");
+let count=Number(localStorage.getItem(STORAGE_KEY)||0);
 
-let savedVolume = 1;
-
-
-// 볼륨 조절
-volume.addEventListener("input", function(){
-
-    let value = Number(this.value) / 100;
-
-    video.volume = value;
-
-    savedVolume = value;
-
-    video.muted = false;
-
-    muteBtn.innerHTML = "🔊 음소거";
-
-
-    volumeText.innerHTML =
-        this.value + "%";
-
-}
-
-
-// 음소거
-muteBtn.addEventListener("click", function(){
-
-    if(video.muted){
-
-        video.muted = false;
-
-        video.volume = savedVolume;
-
-        volume.value = savedVolume * 100;
-
-        volumeText.innerHTML =
-            Math.round(savedVolume * 100) + "%";
-
-        muteBtn.innerHTML="🔊 음소거";
-
-    }
-    else{
-
-        savedVolume = video.volume;
-
-        video.muted = true;
-
-        volume.value = 0;
-
-        volumeText.innerHTML="0%";
-
-        muteBtn.innerHTML="🔇 음소거 해제";
-
-    }
-
-}
 // 현재 재생 세션인지 여부
 let isPlayingSession=false;
 
@@ -335,7 +251,7 @@ video.onended=()=>{
 document.addEventListener("contextmenu", function(e){
     e.preventDefault();
 });
-    
+
 </script>
 
 </body>
