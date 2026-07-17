@@ -190,11 +190,6 @@
         border-radius:15px;
         background:#000;
     ">
-        <div style="margin:10px 0;">
-    <button id="fullscreenBtn" class="play-btn" style="width:120px; border-radius:20px;">
-        ⛶ 전체화면
-    </button>
-</div>
 </video>
 
 <video
@@ -447,6 +442,20 @@ video.onended = function() {
     // 초기 실행
     checkExpiration();
     renderPlaylist();
+
+    video.ondblclick = () => {
+
+    if (!document.fullscreenElement) {
+
+        video.requestFullscreen();
+
+    } else {
+
+        document.exitFullscreen();
+
+    }
+
+};
 </script>
 
 </body>
