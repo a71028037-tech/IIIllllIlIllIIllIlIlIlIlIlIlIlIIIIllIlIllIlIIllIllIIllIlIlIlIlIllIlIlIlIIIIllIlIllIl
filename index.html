@@ -117,12 +117,11 @@ disablePictureInPicture
 <button id="muteBtn">🔊 음소거</button>
 
 <input 
-    type="range"
     id="volume"
+    type="range"
     min="0"
-    max="1"
-    step="0.01"
-    value="1"
+    max="100"
+    value="100"
 >
 
 <span id="volumeText">100%</span>
@@ -149,16 +148,65 @@ const used=document.getElementById("used");
 
 const remain=document.getElementById("remain");
 
-const muteBtn = document.getElementById("muteBtn");
-    
 const volume = document.getElementById("volume");
-    
 const volumeText = document.getElementById("volumeText");
+const muteBtn = document.getElementById("muteBtn");
 
-let lastVolume = 1;    
+let savedVolume = 1;
 
-let count=Number(localStorage.getItem(STORAGE_KEY)||0);
 
+// 볼륨 조절
+volume.addEventListener("input", function(){
+
+    let value = Number(this.value) / 100;
+
+    video.volume = value;
+
+    savedVolume = value;
+
+    video.muted = false;
+
+    muteBtn.innerHTML = "🔊 음소거";
+
+
+    volumeText.innerHTML =
+        this.value + "%";
+
+});
+
+
+// 음소거
+muteBtn.addEventListener("click", function(){
+
+    if(video.muted){
+
+        video.muted = false;
+
+        video.volume = savedVolume;
+
+        volume.value = savedVolume * 100;
+
+        volumeText.innerHTML =
+            Math.round(savedVolume * 100) + "%";
+
+        muteBtn.innerHTML="🔊 음소거";
+
+    }
+    else{
+
+        savedVolume = video.volume;
+
+        video.muted = true;
+
+        volume.value = 0;
+
+        volumeText.innerHTML="0%";
+
+        muteBtn.innerHTML="🔇 음소거 해제";
+
+    }
+
+});
 // 현재 재생 세션인지 여부
 let isPlayingSession=false;
 
@@ -287,57 +335,6 @@ video.onended=()=>{
 document.addEventListener("contextmenu", function(e){
     e.preventDefault();
 });
-
-// 볼륨 슬라이더
-volume.oninput = function(){
-
-    let value = Number(this.value);
-
-    video.volume = value;
-
-    if(value > 0){
-        video.muted = false;
-        lastVolume = value;
-        muteBtn.innerHTML="🔊 음소거";
-    }
-
-    volumeText.innerHTML =
-        Math.round(value * 100) + "%";
-};
-
-
-// 음소거 버튼
-muteBtn.onclick=function(){
-
-    if(video.muted || video.volume === 0){
-
-        video.muted=false;
-
-        video.volume=lastVolume;
-
-        volume.value=lastVolume;
-
-        volumeText.innerHTML =
-            Math.round(lastVolume*100)+"%";
-
-        muteBtn.innerHTML="🔊 음소거";
-
-    }
-    else{
-
-        lastVolume=video.volume;
-
-        video.muted=true;
-
-        volume.value=0;
-
-        volumeText.innerHTML="0%";
-
-        muteBtn.innerHTML="🔇 음소거 해제";
-
-    }
-
-};
     
 </script>
 
