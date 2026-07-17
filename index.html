@@ -97,7 +97,7 @@ disablePictureInPicture
 
 <div id="controls">
 <button id="playBtn">▶️ 재생</button>
-<button id="pauseBtn">⏸️ 일시정지</button>
+<button id="pauseBtn">⏸️ 정지</button>
 </div>
 </div>
 
@@ -247,10 +247,9 @@ video.onended=()=>{
 
 };
 
-video.addEventListener("contextmenu",e=>{
-
+// 전체 페이지 우클릭 방지
+document.addEventListener("contextmenu", function(e){
     e.preventDefault();
-
 });
 
 </script>
