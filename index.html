@@ -122,8 +122,8 @@ button:disabled{
 </h3>
 
 <p>
-영상은 당일 23시까지 이용 가능합니다.<br>
-사용하지 않은 재생 횟수는 자동 삭제됩니다.<br>
+신청당일 23시까지 이용 가능하며 미사용횟수는 일괄 삭제됩니다.<br>
+마지막 사용 횟수는 (일시정지) 기능이 작동하지 않습니다.<br>
 부정하게 이용하거나 타인에게 공유 시 앞으로 이용이 제한됩니다.
 </p>
 
@@ -198,12 +198,6 @@ value="100">
 const MAX_PLAY = 3;
 
 const STORAGE_KEY="video_play_count";
-
-
-const videoTitle = "Healing Box";
-
-const videoDescription = "당일 23시까지 사용가능. 미사용분 자동삭제.";
-
 
 const video=document.getElementById("video");
 
