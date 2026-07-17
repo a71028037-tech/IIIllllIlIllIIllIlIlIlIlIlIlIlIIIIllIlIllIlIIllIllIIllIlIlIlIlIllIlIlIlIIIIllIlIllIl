@@ -302,9 +302,29 @@ playBtn.onclick=async()=>{
 
 
 
-pauseBtn.onclick=()=>{
+pauseBtn.onclick=async()=>{
 
-    video.pause();
+    if(video.paused){
+
+        try{
+
+            await video.play();
+
+            pauseBtn.innerHTML="⏸️ 정지";
+
+        }catch(e){
+
+            console.log(e);
+
+        }
+
+    }else{
+
+        video.pause();
+
+        pauseBtn.innerHTML="▶️ 재생";
+
+    }
 
 };
 
