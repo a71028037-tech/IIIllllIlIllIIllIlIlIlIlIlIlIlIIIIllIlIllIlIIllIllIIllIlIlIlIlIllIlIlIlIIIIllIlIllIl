@@ -183,7 +183,7 @@
     preload="metadata"
     style="
         width:100%;
-        max-width:700px;
+        max-width:1200px;
         height:auto;
         display:block;
         margin:20px auto;
@@ -442,23 +442,6 @@ video.onended = function() {
     // 초기 실행
     checkExpiration();
     renderPlaylist();
-
-    video.ondblclick = () => {
-
-    if (!document.fullscreenElement) {
-
-        video.requestFullscreen();
-
-    } else {
-
-        document.exitFullscreen();
-
-    }
-
-};
-
-        video.requestFullscreen();
-    
 </script>
 
 </body>
