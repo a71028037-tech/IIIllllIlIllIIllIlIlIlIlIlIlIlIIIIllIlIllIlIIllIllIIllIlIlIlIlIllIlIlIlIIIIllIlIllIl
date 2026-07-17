@@ -2,7 +2,7 @@
 <html lang="ko">
 <head>
 <meta charset="UTF-8">
-<title>Video Player</title>
+<title>ㅊㅃㄲㅇ ㅈㅋㅂㅅ🎵</title>
 
 <style>
 
@@ -91,10 +91,8 @@ button:disabled{
 
 <div id="player">
 
-<div id="info">
 
-🎥 총 재생 가능 :
-<!--<b><span id="maxCount"></span></b>회<br>-->
+<div id="info">
 
 📺 사용 횟수 :
 <b><span id="used"></span></b>회<br>
@@ -103,6 +101,7 @@ button:disabled{
 <b><span id="remain"></span></b>회
 
 </div>
+
 
 
 <video
@@ -117,7 +116,9 @@ disablePictureInPicture
 </video>
 
 
-<!-- 볼륨 조절 추가 -->
+
+<!-- 볼륨 조절 -->
+
 <div id="volumeBox">
 
 🔊 볼륨 :
@@ -130,12 +131,6 @@ max="100"
 value="100">
 
 <span id="volumeValue">100%</span>
-
-<br>
-
-<!--<button id="muteBtn">
-🔇 음소거
-</button>-->
 
 </div>
 
@@ -165,9 +160,11 @@ const MAX_PLAY = 3;
 
 const STORAGE_KEY="video_play_count";
 
+
 const videoTitle = "Healing Box";
-    
-const videoDescription = "당일 23시까지 사용가능. 미사용분 자동삭제.";    
+
+const videoDescription = "당일 23시까지 사용가능. 미사용분 자동삭제.";
+
 
 const video=document.getElementById("video");
 
@@ -175,7 +172,6 @@ const playBtn=document.getElementById("playBtn");
 
 const pauseBtn=document.getElementById("pauseBtn");
 
-const maxCount=document.getElementById("maxCount");
 
 const used=document.getElementById("used");
 
@@ -185,8 +181,6 @@ const remain=document.getElementById("remain");
 const volume=document.getElementById("volume");
 
 const volumeValue=document.getElementById("volumeValue");
-
-const muteBtn=document.getElementById("muteBtn");
 
 
 
@@ -199,14 +193,14 @@ let isPlayingSession=false;
 
 function updateInfo(){
 
+
     let left=MAX_PLAY-count;
 
-
-    maxCount.innerText=MAX_PLAY;
 
     used.innerText=count;
 
     remain.innerText=left;
+
 
 
     if(left<=0){
@@ -226,7 +220,9 @@ function updateInfo(){
 }
 
 
+
 updateInfo();
+
 
 
 
@@ -292,7 +288,6 @@ playBtn.onclick=async()=>{
 
             }
 
-
         }
 
 
@@ -315,10 +310,8 @@ pauseBtn.onclick=()=>{
 
 
 
-// =====================
-// 볼륨 기능 추가
-// =====================
 
+// 볼륨 기능
 
 volume.oninput=()=>{
 
@@ -336,29 +329,7 @@ volume.oninput=()=>{
 
 
 
-//    muteBtn.onclick=()=>{
-
-
-//    video.muted=!video.muted;
-
-
-
-//    if(video.muted){
-
-//        muteBtn.innerHTML="🔊 음소거 해제";
-
-//    }else{
-
-//        muteBtn.innerHTML="🔇 음소거";
-
-//    }
-
-
-//};
-
-
-
-// 초기 볼륨 설정
+// 초기 볼륨
 
 video.volume=1;
 
