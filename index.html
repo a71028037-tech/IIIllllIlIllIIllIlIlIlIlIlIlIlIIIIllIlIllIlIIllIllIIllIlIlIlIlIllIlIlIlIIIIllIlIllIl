@@ -194,6 +194,8 @@ let isPlayingSession=false;
 function updateInfo(){
 
 
+function updateInfo(){
+
     let left=MAX_PLAY-count;
 
 
@@ -209,11 +211,27 @@ function updateInfo(){
 
         playBtn.innerHTML="🔒 재생 불가";
 
+
+        // 정지 버튼 비활성화 추가
+        pauseBtn.disabled=true;
+
+        pauseBtn.innerHTML="🔒 사용 종료";
+
+
+        // 혹시 재생 중이면 정지
+        video.pause();
+
+
     }else{
 
         playBtn.disabled=false;
 
         playBtn.innerHTML="▶️ 재생";
+
+
+        pauseBtn.disabled=false;
+
+        pauseBtn.innerHTML="⏸️ 정지";
 
     }
 
@@ -302,9 +320,29 @@ playBtn.onclick=async()=>{
 
 
 
-pauseBtn.onclick=()=>{
+pauseBtn.onclick=async()=>{
 
-    video.pause();
+    if(video.paused){
+
+        try{
+
+            await video.play();
+
+            pauseBtn.innerHTML="⏸️ 정지";
+
+        }catch(e){
+
+            console.log(e);
+
+        }
+
+    }else{
+
+        video.pause();
+
+        pauseBtn.innerHTML="▶️ 정지";
+
+    }
 
 };
 
