@@ -177,13 +177,13 @@
     <!-- 오디오 엘리먼트 (화면에서 숨김) -->
 <video
     id="videoPlayer"
-    width="100%"
-    height="400"
     playsinline
     preload="metadata"
+    controlsList="nodownload noremoteplayback"
+    disablePictureInPicture
     style="
         width:100%;
-        max-width:1200px;
+        max-width:700px;
         height:auto;
         display:block;
         margin:20px auto;
@@ -192,13 +192,17 @@
     ">
 </video>
 
-<video
-    id="videoPlayer"
-    playsinline
-    preload="metadata"
-    controlsList="nodownload nofullscreen noremoteplayback"
-    disablePictureInPicture>
-</video>
+<div style="margin-bottom:20px;">
+    <button id="fullscreenBtn" class="play-btn"
+        style="
+        width:140px;
+        height:45px;
+        border-radius:30px;
+        margin:auto;
+        display:flex;">
+        ⛶ 전체화면
+    </button>
+</div>
     
     <!-- 재생 목록 영역 -->
     <ul class="playlist" id="playlist"></ul>
@@ -405,7 +409,11 @@ function togglePlay(songId, videoFile) {
 
     video.load();
 
-    video.play();
+    video.play().catch(err=>{
+
+    console.log(err);
+
+});
 
     charHeader.innerText = "⸜(*╹▽╹*)⚝";
 
@@ -438,6 +446,32 @@ video.onended = function() {
             renderPlaylist();
         }
     }, 1000);
+
+const fullscreenBtn = document.getElementById("fullscreenBtn");
+
+fullscreenBtn.onclick = () => {
+
+    if (video.requestFullscreen) {
+
+        video.requestFullscreen();
+
+    } else if (video.webkitRequestFullscreen) {
+
+        video.webkitRequestFullscreen();
+
+    } else if (video.webkitEnterFullscreen) {
+
+        video.webkitEnterFullscreen();
+
+    }
+
+};
+
+document.addEventListener("fullscreenchange", ()=>{
+
+    renderPlaylist();
+
+});    
 
     // 초기 실행
     checkExpiration();
