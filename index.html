@@ -1,28 +1,118 @@
-<video id="video" controls width="600">
-  <source src="SUNSHINE LOVE.mp4" type="video/mp4">
-</video>
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<title>Video Player</title>
 
-<script>
-const MAX_PLAY = 3;
-const key = "play_count";
-
-let count = Number(localStorage.getItem(key) || 0);
-
-const video = document.getElementById("video");
-
-if(count >= MAX_PLAY){
-    alert("재생 가능 횟수를 모두 사용했습니다.");
-    video.removeAttribute("controls");
+<style>
+body{
+    margin:0;
+    background:#111;
+    display:flex;
+    justify-content:center;
+    align-items:center;
+    height:100vh;
 }
 
-video.addEventListener("play", function(){
+#player{
+    width:640px;
+    height:360px;
+    background:#000;
+    position:relative;
+}
+
+video{
+    width:100%;
+    height:100%;
+    object-fit:contain;
+    background:#000;
+}
+
+#playBtn{
+    position:absolute;
+    left:50%;
+    top:50%;
+    transform:translate(-50%,-50%);
+    padding:15px 40px;
+    font-size:20px;
+    cursor:pointer;
+}
+</style>
+
+</head>
+<body>
+
+<div id="player">
+
+<video
+id="video"
+controlsList="nodownload nofullscreen noremoteplayback"
+disablePictureInPicture
+playsinline
+>
+    <source src="SUNSHINE LOVE.mp4" type="video/mp4">
+</video>
+
+<button id="playBtn">▶ 재생</button>
+
+</div>
+
+<script>
+
+const MAX_PLAY = 3;
+const STORAGE_KEY = "video_play_count";
+
+const video = document.getElementById("video");
+const btn = document.getElementById("playBtn");
+
+let count = Number(localStorage.getItem(STORAGE_KEY) || 0);
+
+if(count >= MAX_PLAY){
+    btn.innerText="재생횟수 초과";
+    btn.disabled=true;
+}
+
+btn.onclick = async ()=>{
+
     if(count >= MAX_PLAY){
-        video.pause();
+        alert("재생 가능한 횟수를 모두 사용했습니다.");
         return;
     }
 
     count++;
-    localStorage.setItem(key, count);
-    console.log("재생횟수 :", count);
+    localStorage.setItem(STORAGE_KEY,count);
+
+    btn.style.display="none";
+
+    try{
+        await video.play();
+    }catch(e){
+        alert("재생 실패");
+    }
+
+    // PiP 실행 시도
+    if(document.pictureInPictureEnabled){
+        try{
+            await video.requestPictureInPicture();
+        }catch(e){
+            console.log("PiP 지원 안됨");
+        }
+    }
+
+}
+
+// 영상 끝나면 버튼 다시 표시
+video.onended=function(){
+    btn.style.display="block";
+    btn.innerText="▶ 다시 재생";
+}
+
+// 우클릭 금지
+video.addEventListener("contextmenu",e=>{
+    e.preventDefault();
 });
+
 </script>
+
+</body>
+</html>
